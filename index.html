@@ -41,7 +41,7 @@
       }).then((unityInstance) => {
         if (user) {
           // Send Telegram user to Unity
-          unityInstance.SendMessage("GameManager", "ReceiveMessage", JSON.stringify(user));
+          unityInstance.SendMessage("Bridge", "ReceiveUserInfo", JSON.stringify(user));
         } else {
           console.warn("Not running inside Telegram Mini App");
         }

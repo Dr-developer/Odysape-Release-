@@ -27,7 +27,7 @@
       // Get Telegram user data
       let tg = window.Telegram.WebApp;
       let user = tg.initDataUnsafe.user; // may be undefined if not inside Telegram
-
+      console.log(user);
       // Create Unity instance
       createUnityInstance(document.querySelector("#unity-canvas"), {
         arguments: [],

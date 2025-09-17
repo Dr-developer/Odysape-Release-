@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Unity Web Player | Odysape</title>
+        <script src="https://telegram.org/js/telegram-web-app.js"></script> <!-- Telegram WebApp SDK -->
   </head>
   <body style="text-align: center; padding: 0; border: 0; margin: 0;">
     <canvas id="unity-canvas" width=1080 height=1920 tabindex="-1" style="width: 1080px; height: 1920px; background: url('Build/44b52061476c9e4c4033d8e3831d86ed.jpg') center / cover"></canvas>
@@ -23,7 +24,10 @@
 
         document.body.style.textAlign = "left";
       }
-
+  let tg = window.Telegram.WebApp;
+      let user = tg.initDataUnsafe.user;
+            console.log(user);
+// may be undefined if not inside Telegram
       createUnityInstance(document.querySelector("#unity-canvas"), {
         arguments: [],
         dataUrl: "Build/3e754a81dd3152488b90b9f36ab40dc5.data",
@@ -35,6 +39,12 @@
         productVersion: "0.2.1.2",
         // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
         // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
+      }).then((unityInstance) => {    if (user) {
+          // Send Telegram user to Unity
+          unityInstance.SendMessage("Bridge", "ReceiveUserInfo", JSON.stringify(user));
+        } else {
+          console.warn("Not running inside Telegram Mini App");
+        }
       });
     </script>
   </body>

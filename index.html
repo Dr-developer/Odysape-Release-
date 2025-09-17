@@ -8,7 +8,7 @@
   </head>
   <body style="text-align: center; padding: 0; border: 0; margin: 0;">
     <canvas id="unity-canvas" width=1080 height=1920 tabindex="-1" style="width: 1080px; height: 1920px; background: url('Build/8b0318c637dc3a12b43d420541bcfc49.jpg') center / cover"></canvas>
-    <script src="Build/9a91b11e8b767e48502ea3836ff9d223.loader.js"></script>
+    <script src="Build/33ad6c2ad5b180ff636161f35f3ef9d2.loader.js"></script>
     <script>
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
         // Mobile device style: fill the whole browser client area with the game canvas:
@@ -27,12 +27,12 @@
       let tg = window.Telegram.WebApp;
       let user = tg.initDataUnsafe.user;
       console.log(user);
-      
+
       createUnityInstance(document.querySelector("#unity-canvas"), {
         arguments: [],
-        dataUrl: "Build/ff5f760c132c650b690fd45df27a55d6.data",
+        dataUrl: "Build/ac01a23bd6ceb2ec45db5e97fc978566.data",
         frameworkUrl: "Build/35338515f30aba286685904ea2ffeb49.framework.js",
-        codeUrl: "Build/580a8eb5a86440a387bce1ec365732e9.wasm",
+        codeUrl: "Build/d5c04f3bc6b9aa47ed06743e54119dd8.wasm",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "Jinx",
         productName: "Odysape",

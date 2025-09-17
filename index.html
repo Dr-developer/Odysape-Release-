@@ -29,15 +29,17 @@
       let user = tg.initDataUnsafe.user; // may be undefined if not inside Telegram
       console.log(user);
       // Create Unity instance
-      createUnityInstance(document.querySelector("#unity-canvas"), {
+       createUnityInstance(document.querySelector("#unity-canvas"), {
         arguments: [],
-        dataUrl: "Build/056826998218670365578a7a9fedf471.data",
-        frameworkUrl: "Build/e14c210b146b60cac962811f611f9a8e.framework.js",
-        codeUrl: "Build/2ddf179daccbe7aba5661c7e16052c6d.wasm",
+        dataUrl: "Build/3e754a81dd3152488b90b9f36ab40dc5.data",
+        frameworkUrl: "Build/35338515f30aba286685904ea2ffeb49.framework.js",
+        codeUrl: "Build/79d1969ad84e717069aea749e4a20e3b.wasm",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "Jinx",
         productName: "Odysape",
-        productVersion: "0.2.1.1",
+        productVersion: "0.2.1.2",
+        // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
+        // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
       }).then((unityInstance) => {
         if (user) {
           // Send Telegram user to Unity

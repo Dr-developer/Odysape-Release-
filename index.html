@@ -7,8 +7,8 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script> <!-- Telegram WebApp SDK -->
   </head>
   <body style="text-align: center; padding: 0; border: 0; margin: 0;">
-    <canvas id="unity-canvas" width=1080 height=1920 tabindex="-1" style="width: 1080px; height: 1920px; background: url('Build/8b0318c637dc3a12b43d420541bcfc49.jpg') center / cover"></canvas>
-    <script src="Build/da5d52f5cb85dd93e0a00cefc2d62848.loader.js"></script>
+    <canvas id="unity-canvas" width=1080 height=1920 tabindex="-1" style="width: 1080px; height: 1920px; background: url('Build/0fbe1dad72e72358d84306ec319dc524.jpg') center / cover"></canvas>
+    <script src="Build/ee93f1821724ebf80d6d267179c34e36.loader.js"></script>
     <script>
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
         // Mobile device style: fill the whole browser client area with the game canvas:
@@ -24,15 +24,15 @@
 
         document.body.style.textAlign = "left";
       }
+
       let tg = window.Telegram.WebApp;
       let user = tg.initDataUnsafe.user;
       console.log(user);
-
       createUnityInstance(document.querySelector("#unity-canvas"), {
         arguments: [],
-        dataUrl: "Build/c7247b95b97723798f2b0cf2b1979afa.data",
+        dataUrl: "Build/dd7a406a90133c47f7d05494c9970ca8.data",
         frameworkUrl: "Build/35338515f30aba286685904ea2ffeb49.framework.js",
-        codeUrl: "Build/bf2294e816c51295bd6ae4a5c9075082.wasm",
+        codeUrl: "Build/8de7364c56d29d290081aae31985c4be.wasm",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "Jinx",
         productName: "Odysape",

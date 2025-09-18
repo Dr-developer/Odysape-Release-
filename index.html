@@ -104,7 +104,7 @@
 				canvas = instance.Module.canvas;
 				if (user) {
 					// Send Telegram user to Unity
-					unityInstance.SendMessage("Bridge", "ReceiveUserInfo", JSON.stringify(user));
+					instance.SendMessage("Bridge", "ReceiveUserInfo", JSON.stringify(user));
 				} else {
 					console.warn("Not running inside Telegram Mini App");
 				}

@@ -62,7 +62,8 @@
 			// Get Telegram user data
 			let tg = window.Telegram.WebApp;
 			let  user = tg.initDataUnsafe.user; // may be undefined if not inside Telegram
-
+			let unityInstance = null;
+			
 			let scaleToFit;
 			try {
 				scaleToFit = !!JSON.parse("");
@@ -101,13 +102,16 @@
 				window.focus();
 			}
 			createUnityInstance(canvas, config, progressHandler).then(function (instance) {
+				unityInstance = instance; // save globally
 				canvas = instance.Module.canvas;
-				if (user) {
-					// Send Telegram user to Unity
-					instance.SendMessage("Bridge", "ReceiveUserInfo", JSON.stringify(user));
-				} else {
-					console.warn("Not running inside Telegram Mini App");
-				}
+				 if (user) 
+				 {
+    			    unityInstance.SendMessage("Bridge", "ReceiveUserInfo", JSON.stringify(user));
+    			} 
+				 else {
+     
+					 console.warn("Not running inside Telegram Mini App");
+   				 }
 				onResize();
 			});
 			window.addEventListener('resize', onResize);

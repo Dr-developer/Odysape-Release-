@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Odysape</title>
+	<style>
+		html,
+		body {
+			background: 0D0D5F;
+			width: 100%;
+			height: 100%;
+			overflow: visible;
+			padding: 0;
+			margin: 0;
+		}
+
+		div#gameContainer {
+			background: transparent !important;
+			position: absolute;
+		}
+
+		div#gameContainer canvas {
+			position: absolute;
+			-webkit-user-select: none;
+			user-select: none;
+		}
+
+		div#gameContainer canvas[data-pixel-art="true"] {
+			position: absolute;
+			image-rendering: optimizeSpeed;
+			image-rendering: -webkit-crisp-edges;
+			image-rendering: -moz-crisp-edges;
+			image-rendering: -o-crisp-edges;
+			image-rendering: crisp-edges;
+			image-rendering: -webkit-optimize-contrast;
+			image-rendering: optimize-contrast;
+			image-rendering: pixelated;
+			-ms-interpolation-mode: nearest-neighbor;
+		}
+	</style>
+	<script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+
+<body>
+	<div id="gameContainer">
+		<canvas id="unity-canvas" width="1080" height="1920" data-pixel-art="true"></canvas>
+		<script src="Build/14f1be8e75ab71cd89541be28ca7abfe.loader.js"></script>
+		<script>
+			let canvas = document.querySelector("#unity-canvas");
+			let config = {
+				dataUrl: "Build/5a82b13197fc5afa890d97ce95fd9959.data",
+				frameworkUrl: "Build/35338515f30aba286685904ea2ffeb49.framework.js",
+				codeUrl: "Build/6da1969c60aad707b5f87a60b7816d0e.wasm",
+				streamingAssetsUrl: "StreamingAssets",
+				companyName: "Jinx",
+				productName: "Odysape",
+				productVersion: "0.3",
+				autoSyncPersistentDataPath: true,
+			};
+
+			let scaleToFit;
+			try {
+				scaleToFit = !!JSON.parse("");
+			} catch (e) {
+				scaleToFit = true;
+			}
+			function progressHandler(progress) {
+				var percent = progress * 100 + '%';
+				canvas.style.background = 'linear-gradient(to right, white, white ' + percent + ', transparent ' + percent + ', transparent) no-repeat center';
+				canvas.style.backgroundSize = '100% 1rem';
+			}
+			function onResize() {
+				let container = canvas.parentElement;
+				let w;
+				let h;
+
+				if (scaleToFit) {
+					w = window.innerWidth;
+					h = window.innerHeight;
+
+					var r = 1920 / 1080;
+
+					if (w * r > window.innerHeight) {
+						w = Math.min(w, Math.ceil(h / r));
+					}
+					h = Math.floor(w * r);
+				} else {
+					w = 1080;
+					h = 1920;
+				}
+
+				container.style.width = canvas.style.width = w + "px";
+				container.style.height = canvas.style.height = h + "px";
+				container.style.top = Math.floor((window.innerHeight - h) / 2) + "px";
+				container.style.left = Math.floor((window.innerWidth - w) / 2) + "px";
+				window.focus();
+			}
+			// Get Telegram user data
+			let tg = window.Telegram.WebApp;
+			let  user = tg.initDataUnsafe.user; // may be undefined if not inside Telegram
+			let unityInstance = null;
+
+			createUnityInstance(canvas, config, progressHandler).then(function (instance) {
+				unityInstance = instance; // save globally
+				canvas = instance.Module.canvas;
+
+				if (user) {
+					unityInstance.SendMessage("Bridge", "ReceiveUserInfo", JSON.stringify(user));
+				} else {
+					console.warn("Not running inside Telegram Mini App");
+				}
+
+				onResize();
+			});
+			window.addEventListener('resize', onResize);
+			onResize();
+
+			if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+				// Mobile device style: fill the whole browser client area with the game canvas:
+				const meta = document.createElement('meta');
+				meta.name = 'viewport';
+				meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+				document.getElementsByTagName('head')[0].appendChild(meta);
+			}
+		</script>
+	</div>
+</body>
+
+</html>

@@ -1,0 +1,31 @@
+html,
+body {
+    background: #000;
+    width: 100%;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+#gameContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent !important;
+}
+
+#gameContainer canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    user-select: none;
+}
+
+#gameContainer canvas[data-pixel-art="true"] {
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}

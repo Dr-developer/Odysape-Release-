@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Odysape</title>
+`	<link rel="stylesheet" href="style.css">
+	<script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+
+<body>
+	<div id="gameContainer">
+		<canvas id="unity-canvas" width="1080" height="1920" data-pixel-art=""></canvas>
+		<script src="Build/6b0da26f3948f7accf4cd2010b422668.loader.js"></script>
+		<script>
+			let canvas = document.querySelector("#unity-canvas");
+			let config = {
+				dataUrl: "Build/713560e2504e8e678ecd644406c7ba8c.data",
+				frameworkUrl: "Build/c6fe917453e3e4060986f5691f722c2f.framework.js",
+				codeUrl: "Build/3d65e3fa8fc8e41c6eddfb0c8853612b.wasm",
+				streamingAssetsUrl: "StreamingAssets",
+				companyName: "Jinx",
+				productName: "Odysape",
+				productVersion: "0.4.1",
+				autoSyncPersistentDataPath: true,
+			};
+
+			let scaleToFit;
+			try {
+				scaleToFit = !!JSON.parse("");
+			} catch (e) {
+				scaleToFit = true;
+			}
+			function progressHandler(progress) {
+				var percent = progress * 100 + '%';
+				canvas.style.background = 'linear-gradient(to right, white, white ' + percent + ', transparent ' + percent + ', transparent) no-repeat center';
+				canvas.style.backgroundSize = '100% 1rem';
+			}
+			function onResize() {
+				let container = canvas.parentElement;
+				let w;
+				let h;
+
+				if (scaleToFit) {
+					w = window.innerWidth;
+					h = window.innerHeight;
+
+					var r = 1920 / 1080;
+
+					if (w * r > window.innerHeight) {
+						w = Math.min(w, Math.ceil(h / r));
+					}
+					h = Math.floor(w * r);
+				} else {
+					w = 1080;
+					h = 1920;
+				}
+
+				container.style.width = canvas.style.width = w + "px";
+				container.style.height = canvas.style.height = h + "px";
+				container.style.top = Math.floor((window.innerHeight - h) / 2) + "px";
+				container.style.left = Math.floor((window.innerWidth - w) / 2) + "px";
+				window.focus();
+			}
+			// Get Telegram user data
+			let tg = window.Telegram.WebApp;
+			let  user = tg.initDataUnsafe.user; // may be undefined if not inside Telegram
+			let unityInstance = null;
+
+			createUnityInstance(canvas, config, progressHandler).then(function (instance) {
+				unityInstance = instance; // save globally
+				canvas = instance.Module.canvas;
+
+				if (user) {
+					unityInstance.SendMessage("Bridge", "ReceiveUserInfo", JSON.stringify(user));
+				} else {
+					console.warn("Not running inside Telegram Mini App");
+				}
+
+				onResize();
+			});
+			window.addEventListener('resize', onResize);
+			onResize();
+
+			if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+				// Mobile device style: fill the whole browser client area with the game canvas:
+				const meta = document.createElement('meta');
+				meta.name = 'viewport';
+				meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+				document.getElementsByTagName('head')[0].appendChild(meta);
+			}
+			function ShareTelegram(url, text) {
+				const fullUrl = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
+				window.open(fullUrl, "_blank");}
+
+			async function CopyToClipboard(text) {
+				try {
+					await navigator.clipboard.writeText(text);
+					console.log("Copied to clipboard:", text);
+
+				} catch (err) {
+					console.error("Failed to copy:", err);
+					// Fallback method (in case clipboard API isn’t allowed)
+					const tempInput = document.createElement("input");
+					document.body.appendChild(tempInput);
+					tempInput.value = text;
+					tempInput.select();
+					document.execCommand("copy");
+					document.body.removeChild(tempInput);
+					alert("Link copied to clipboard!");
+				}
+			}
+		</script>
+	</div>
+</body>
+
+</html>

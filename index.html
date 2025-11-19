@@ -1,118 +1,127 @@
 <!DOCTYPE html>
 <html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Unity Web Player | odysape-unity-client-main</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">
+  </head>
+  <body>
+    <div id="unity-container" class="unity-desktop">
+      <canvas id="unity-canvas" width=960 height=600 tabindex="-1"></canvas>
+      <div id="unity-loading-bar">
+        <div id="unity-logo"></div>
+        <div id="unity-progress-bar-empty">
+          <div id="unity-progress-bar-full"></div>
+        </div>
+      </div>
+      <div id="unity-warning"> </div>
+      <div id="unity-footer">
+        <div id="unity-logo-title-footer"></div>
+        <div id="unity-fullscreen-button"></div>
+        <div id="unity-build-title">odysape-unity-client-main</div>
+      </div>
+    </div>
+    <script>
+      var canvas = document.querySelector("#unity-canvas");
 
-<head>
-	<meta charset="utf-8">
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<title>Odysape</title>
-`	<link rel="stylesheet" href="style.css">
-	<script src="https://telegram.org/js/telegram-web-app.js"></script>
-</head>
+      // Shows a temporary message banner/ribbon for a few seconds, or
+      // a permanent error message on top of the canvas if type=='error'.
+      // If type=='warning', a yellow highlight color is used.
+      // Modify or remove this function to customize the visually presented
+      // way that non-critical warnings and error messages are presented to the
+      // user.
+      function unityShowBanner(msg, type) {
+        var warningBanner = document.querySelector("#unity-warning");
+        function updateBannerVisibility() {
+          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+        }
+        var div = document.createElement('div');
+        div.innerHTML = msg;
+        warningBanner.appendChild(div);
+        if (type == 'error') div.style = 'background: red; padding: 10px;';
+        else {
+          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
+          setTimeout(function() {
+            warningBanner.removeChild(div);
+            updateBannerVisibility();
+          }, 5000);
+        }
+        updateBannerVisibility();
+      }
 
-<body>
-	<div id="gameContainer">
-		<canvas id="unity-canvas" width="1080" height="1920" data-pixel-art=""></canvas>
-		<script src="Build/6b0da26f3948f7accf4cd2010b422668.loader.js"></script>
-		<script>
-			let canvas = document.querySelector("#unity-canvas");
-			let config = {
-				dataUrl: "Build/713560e2504e8e678ecd644406c7ba8c.data",
-				frameworkUrl: "Build/c6fe917453e3e4060986f5691f722c2f.framework.js",
-				codeUrl: "Build/3d65e3fa8fc8e41c6eddfb0c8853612b.wasm",
-				streamingAssetsUrl: "StreamingAssets",
-				companyName: "Jinx",
-				productName: "Odysape",
-				productVersion: "0.4.1",
-				autoSyncPersistentDataPath: true,
-			};
+      var buildUrl = "Build";
+      var loaderUrl = buildUrl + "/Test.loader.js";
+      var config = {
+        arguments: [],
+        dataUrl: buildUrl + "/Test.data",
+        frameworkUrl: buildUrl + "/Test.framework.js",
+        codeUrl: buildUrl + "/Test.wasm",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "DefaultCompany",
+        productName: "odysape-unity-client-main",
+        productVersion: "1.0",
+        showBanner: unityShowBanner,
+      };
 
-			let scaleToFit;
-			try {
-				scaleToFit = !!JSON.parse("");
-			} catch (e) {
-				scaleToFit = true;
-			}
-			function progressHandler(progress) {
-				var percent = progress * 100 + '%';
-				canvas.style.background = 'linear-gradient(to right, white, white ' + percent + ', transparent ' + percent + ', transparent) no-repeat center';
-				canvas.style.backgroundSize = '100% 1rem';
-			}
-			function onResize() {
-				let container = canvas.parentElement;
-				let w;
-				let h;
+      // By default, Unity keeps WebGL canvas render target size matched with
+      // the DOM size of the canvas element (scaled by window.devicePixelRatio)
+      // Set this to false if you want to decouple this synchronization from
+      // happening inside the engine, and you would instead like to size up
+      // the canvas DOM size and WebGL render target sizes yourself.
+      // config.matchWebGLToCanvasSize = false;
 
-				if (scaleToFit) {
-					w = window.innerWidth;
-					h = window.innerHeight;
+      // If you would like all file writes inside Unity Application.persistentDataPath
+      // directory to automatically persist so that the contents are remembered when
+      // the user revisits the site the next time, uncomment the following line:
+      // config.autoSyncPersistentDataPath = true;
+      // This autosyncing is currently not the default behavior to avoid regressing
+      // existing user projects that might rely on the earlier manual
+      // JS_FileSystem_Sync() behavior, but in future Unity version, this will be
+      // expected to change.
 
-					var r = 1920 / 1080;
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        // Mobile device style: fill the whole browser client area with the game canvas:
 
-					if (w * r > window.innerHeight) {
-						w = Math.min(w, Math.ceil(h / r));
-					}
-					h = Math.floor(w * r);
-				} else {
-					w = 1080;
-					h = 1920;
-				}
+        var meta = document.createElement('meta');
+        meta.name = 'viewport';
+        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+        document.getElementsByTagName('head')[0].appendChild(meta);
+        document.querySelector("#unity-container").className = "unity-mobile";
+        canvas.className = "unity-mobile";
 
-				container.style.width = canvas.style.width = w + "px";
-				container.style.height = canvas.style.height = h + "px";
-				container.style.top = Math.floor((window.innerHeight - h) / 2) + "px";
-				container.style.left = Math.floor((window.innerWidth - w) / 2) + "px";
-				window.focus();
-			}
-			// Get Telegram user data
-			let tg = window.Telegram.WebApp;
-			let  user = tg.initDataUnsafe.user; // may be undefined if not inside Telegram
-			let unityInstance = null;
+        // To lower canvas resolution on mobile devices to gain some
+        // performance, uncomment the following line:
+        // config.devicePixelRatio = 1;
 
-			createUnityInstance(canvas, config, progressHandler).then(function (instance) {
-				unityInstance = instance; // save globally
-				canvas = instance.Module.canvas;
 
-				if (user) {
-					unityInstance.SendMessage("Bridge", "ReceiveUserInfo", JSON.stringify(user));
-				} else {
-					console.warn("Not running inside Telegram Mini App");
-				}
+      } else {
+        // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
+        canvas.style.width = "960px";
+        canvas.style.height = "600px";
+      }
 
-				onResize();
-			});
-			window.addEventListener('resize', onResize);
-			onResize();
+      document.querySelector("#unity-loading-bar").style.display = "block";
 
-			if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-				// Mobile device style: fill the whole browser client area with the game canvas:
-				const meta = document.createElement('meta');
-				meta.name = 'viewport';
-				meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-				document.getElementsByTagName('head')[0].appendChild(meta);
-			}
-			function ShareTelegram(url, text) {
-				const fullUrl = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
-				window.open(fullUrl, "_blank");}
+      var script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = () => {
+        createUnityInstance(canvas, config, (progress) => {
+          document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
+              }).then((unityInstance) => {
+                document.querySelector("#unity-loading-bar").style.display = "none";
+                document.querySelector("#unity-fullscreen-button").onclick = () => {
+                  unityInstance.SetFullscreen(1);
+                };
 
-			async function CopyToClipboard(text) {
-				try {
-					await navigator.clipboard.writeText(text);
-					console.log("Copied to clipboard:", text);
+              }).catch((message) => {
+                alert(message);
+              });
+            };
 
-				} catch (err) {
-					console.error("Failed to copy:", err);
-					// Fallback method (in case clipboard API isn’t allowed)
-					const tempInput = document.createElement("input");
-					document.body.appendChild(tempInput);
-					tempInput.value = text;
-					tempInput.select();
-					document.execCommand("copy");
-					document.body.removeChild(tempInput);
-					alert("Link copied to clipboard!");
-				}
-			}
-		</script>
-	</div>
-</body>
+      document.body.appendChild(script);
 
+    </script>
+  </body>
 </html>
